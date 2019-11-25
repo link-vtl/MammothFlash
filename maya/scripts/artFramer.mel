@@ -1,0 +1,66 @@
+
+global proc getAnim(string $fileName, string $objectName)
+{
+ //open the file for reading
+ $fileId=`fopen $fileName "r"`;
+ 
+ //get the first line of text
+ string $nextLine = `fgetline $fileId`;
+ 
+ //while $nextline is not emtpy(end of file) do the following 
+ 
+ while ( size( $nextLine ) > 0 ) {
+ 	
+ //tokenize(split) line into separate elements of an array 
+ 	string $rawAnimArray[];
+ tokenize ($nextLine, " ",$rawAnimArray);
+ //place each element of the array into separate variables 
+ print $rawAnimArray;
+ float $frame=$rawAnimArray[0];
+ float $x=$rawAnimArray[1];
+ float $y=$rawAnimArray[2];
+ float $z=$rawAnimArray[3];
+ float $rx=$rawAnimArray[4];
+ float $ry=$rawAnimArray[5];
+ float $rz=$rawAnimArray[6];
+ 
+ //change the currentTime and set keys for tx, ty, tz
+ currentTime $frame ;
+ setAttr ($objectName+".tx") $x;
+ setKeyframe ($objectName+".tx");
+ setAttr ($objectName+".ty") $y;
+ setKeyframe ($objectName+".ty");
+ setAttr ($objectName+".tz") $z;
+ setKeyframe ($objectName+".tz");
+ setAttr ($objectName+".rx") $rx;
+ setKeyframe ($objectName+".rx");
+ setAttr ($objectName+".ry") $ry;
+ setKeyframe ($objectName+".ry");
+ setAttr ($objectName+".rz") $rz;
+ setKeyframe ($objectName+".rz");
+ //get the next line in the ascii file. 
+ $nextLine = `fgetline $fileId`;
+ }
+ //close file 
+ fclose $fileId;
+}
+
+global proc writeFile()
+{
+	//$fileId=`fopen $exampleFileName "w"`; fopen("c:/temp/booo");
+	$fileId=`fopen "c:/temp/booo" "w"`;
+	float $trans[] = getAttr("cam1.translate");
+	for( $item in $trans )
+		{
+            fprint $fileId ($item + " ");
+			print($item + "\n");
+		}
+	fclose $fileId
+}
+
+global proc afGetAnim( )
+{
+	string $fileName = `fileDialog -m 0 -t "Choose ArtFrame file for import"`;
+	string $objectName = "cam1"
+	getAnim($fileName, $objectName)
+}
